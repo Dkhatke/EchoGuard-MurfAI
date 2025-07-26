@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EchoGuard – AI Intercom</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #0e0e0e, #1a1a1a);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: #222;
+      padding: 2rem;
+      border-radius: 18px;
+      width: 90%;
+      max-width: 650px;
+      box-shadow: 0 0 35px rgba(0, 128, 128, 0.5);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      background: linear-gradient(to right, #00cccc, #4B0082);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.3rem;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #cccccc;
+      margin-bottom: 1.2rem;
+    }
+
+    label {
+      font-weight: bold;
+      color: #00ffff;
+      display: block;
+      margin-top: 1rem;
+    }
+
+    select,
+    textarea,
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.4rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: none;
+      background-color: #2a2a2a;
+      color: #fff;
+    }
+
+    textarea {
+      resize: none;
+      height: 100px;
+    }
+
+    button {
+      background-color: #008080;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    button:hover {
+      background-color: #00b3b3;
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .logs {
+      font-size: 0.9rem;
+      color: #ccc;
+      margin-top: 1rem;
+    }
+
+    .solo-section {
+      background-color: #111;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 1.5rem;
+      border: 2px dashed #00ffff;
+    }
+
+    .solo-title {
+      font-size: 1.1rem;
+      color: #00ffff;
+      margin-bottom: 0.5rem;
+    }
+
+    .solo-description {
+      font-size: 0.85rem;
+      color: #cccccc;
+      margin-bottom: 0.5rem;
+    }
+
+    .solo-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+    }
+
+    .badge {
+      background-color: #4B0082;
+      color: white;
+      font-size: 0.8rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+    }
+
+    .future {
+      margin-top: 1.5rem;
+      border-top: 1px solid #333;
+      padding-top: 1rem;
+    }
+
+    .future label {
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+
+    .note {
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 0.4rem;
+    }
+
+    .row {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .row select {
+      flex: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>EchoGuard</h1>
+    <h2>AI Voice Intercom Safety Tool</h2>
+
+    <label for="mode">Mode</label>
+    <select id="mode" onchange="handleModeChange()">
+      <option value="typed">Typed Message</option>
+      <option value="auto">Auto AI Response</option>
+    </select>
+
+    <label for="messageInput">Your Message</label>
+    <textarea id="messageInput" placeholder="Type your message here..."></textarea>
+
+    <label for="countrySelect">Country</label>
+    <select id="countrySelect">
+      <option value="us">🇺🇸 United States</option>
+      <option value="uk">🇬🇧 United Kingdom</option>
+      <option value="in">🇮🇳 India</option>
+      <option value="au">🇦🇺 Australia</option>
+    </select>
+
+    <div class="row">
+      <select id="voiceSelect">
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+      </select>
+      <select id="toneSelect">
+        <option value="calm">Calm</option>
+        <option value="strong">Strong</option>
+        <option value="normal">Normal</option>
+      </select>
+    </div>
+
+    <div class="solo-section">
+      <div class="solo-title">🛡️ Solo Women Mode <span id="soloBadge" class="badge" hidden>Enabled</span></div>
+      <div class="solo-description">Adds subtle background voices to simulate presence of others for safety.</div>
+      <div class="solo-toggle">
+        <input type="checkbox" id="soloModeToggle" onchange="updateBadge()" />
+        <label for="soloModeToggle">Enable Solo Mode</label>
+      </div>
+    </div>
+      <div class="solo-section">
+      <div class="solo-title">🚨 Emergency Mode (Beta)</div>
+      <div class="solo-description">
+        Auto-play warning voice if suspicious activity is detected (future: motion/audio trigger).
+      </div>
+      <div class="solo-toggle">
+        <input type="checkbox" id="emergencyModeToggle" />
+        <label for="emergencyModeToggle">Enable Emergency Auto-Response</label>
+      </div>
+     <button style="margin-top: 0.7rem; background: crimson;" onclick="triggerEmergency()">⚠️ Simulate Detection</button>
+     <p id="status" style="margin-top: 0.5rem; color: #ff4444;"></p>
+
+    </div>
+
+    <label for="visitorAudio">🔊 Upload Visitor Audio</label>
+    <input type="file" id="visitorAudio" accept="audio/*" />
+    <button onclick="transcribeVisitor()">Transcribe & Auto-Reply</button>
+
+    <button onclick="generateVoice()">Generate Voice</button>
+
+    <p id="replyText" style="margin-top:1rem; color:#00ffff;"></p>
+
+    <audio id="audioPlayer" controls hidden></audio>
+    <div class="logs" id="logs"></div>
+
+    <div class="future">
+      <label>🧪 Coming Soon</label>
+      <div class="note">🎤 Mic Input, 📵 Motion Detection, 🧠 Smart Reply, 📀 Save Locally</div>
+    </div>
+  </div>
+
+  <script>
+    function updateBadge() {
+      const badge = document.getElementById('soloBadge');
+      badge.hidden = !document.getElementById('soloModeToggle').checked;
+    }
+
+    function handleModeChange() {
+      const mode = document.getElementById('mode').value;
+      document.getElementById('messageInput').disabled = (mode === 'auto');
+    }
+    async function triggerEmergency() {
+  const statusEl = document.getElementById('status');
+  statusEl.innerText = "🚨 Playing emergency voice...";
+
+  try {
+    const response = await fetch('http://localhost:5000/trigger-emergency', {
+      method: 'POST'
+    });
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.play();
+    audio.onended = () => {
+      statusEl.innerText = "✅ Emergency message played.";
+    };
+  } catch (err) {
+    console.error(err);
+    statusEl.innerText = "❌ Error playing emergency voice.";
+  }
+}
+
+    async function generateVoice() {
+      const message = document.getElementById('messageInput').value;
+      const country = document.getElementById('countrySelect').value;
+      const gender = document.getElementById('voiceSelect').value;
+      const tone = document.getElementById('toneSelect').value;
+      const soloMode = document.getElementById('soloModeToggle').checked;
+      const logs = document.getElementById('logs');
+      const audioPlayer = document.getElementById('audioPlayer');
+
+      if (!message.trim()) {
+        alert("Please type a message.");
+        return;
+      }
+
+      logs.innerText = "🎙️ Generating voice...";
+
+      try {
+        const response = await fetch('http://localhost:5000/generate-voice', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message, country, gender, tone, soloMode })
+        });
+
+        if (!response.ok) throw new Error("Server error.");
+
+        const audioBlob = await response.blob();
+        const url = URL.createObjectURL(audioBlob);
+        audioPlayer.src = url;
+        audioPlayer.hidden = false;
+        audioPlayer.play();
+        logs.innerText = "✅ Voice generated.";
+      } catch (err) {
+        logs.innerText = "❌ Error generating voice.";
+        alert(err.message);
+      }
+    }
+
+    async function transcribeVisitor() {
+      const fileInput = document.getElementById('visitorAudio');
+      const logs = document.getElementById('logs');
+      const audioPlayer = document.getElementById('audioPlayer');
+      const replyText = document.getElementById('replyText');
+
+      if (!fileInput.files[0]) {
+        alert("Please upload a visitor audio file.");
+        return;
+      }
+
+      logs.innerText = "⏳ Transcribing and generating reply...";
+
+      const formData = new FormData();
+      formData.append('audio', fileInput.files[0]);
+
+      try {
+        const response = await fetch('http://localhost:5000/api/transcribe-and-reply', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) throw new Error("Server error during auto-reply.");
+
+        const data = await response.json();
+
+        // Show AI reply text
+        replyText.innerText = "🤖 AI Reply: " + data.text;
+
+        // Play audio
+        const audioBinary = atob(data.audio);
+        const byteArray = new Uint8Array(audioBinary.length);
+        for (let i = 0; i < audioBinary.length; i++) {
+          byteArray[i] = audioBinary.charCodeAt(i);
+        }
+
+        const blob = new Blob([byteArray], { type: 'audio/mpeg' });
+        const url = URL.createObjectURL(blob);
+        audioPlayer.src = url;
+        audioPlayer.hidden = false;
+        audioPlayer.play();
+        logs.innerText = "✅ Auto-reply generated.";
+      } catch (err) {
+        logs.innerText = "❌ Auto-reply failed.";
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
