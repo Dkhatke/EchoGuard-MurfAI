@@ -240,7 +240,7 @@
   statusEl.innerText = "🚨 Playing emergency voice...";
 
   try {
-    const response = await fetch('https://echoguard-murfai.onrender.com/trigger-emergency', {
+    const response = await fetch('http://localhost:5000/trigger-emergency', {
       method: 'POST'
     });
     const blob = await response.blob();
@@ -273,7 +273,7 @@
       logs.innerText = "🎙️ Generating voice...";
 
       try {
-        const response = await fetch('https://echoguard-murfai.onrender.com/generate-voice', {
+        const response = await fetch('http://localhost:5000/generate-voice', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message, country, gender, tone, soloMode })
@@ -310,36 +310,40 @@
       formData.append('audio', fileInput.files[0]);
 
       try {
-        const response = await fetch('https://echoguard-murfai.onrender.com/api/transcribe-and-reply', {
-          method: 'POST',
-          body: formData
-        });
+  const response = await fetch('http://localhost:5000/api/transcribe-and-reply', {
+    method: 'POST',
+    body: formData
+  });
 
-        if (!response.ok) throw new Error("Server error during auto-reply.");
+  if (!response.ok) throw new Error("Server error during auto-reply.");
 
-        const data = await response.json();
+  const data = await response.json();
 
-        // Show AI reply text
-        replyText.innerText = "🤖 AI Reply: " + data.text;
+  // ✅ Show AI reply text
+  replyText.innerText = "🤖 AI Reply: " + data.text;
 
-        // Play audio
-        const audioBinary = atob(data.audio);
-        const byteArray = new Uint8Array(audioBinary.length);
-        for (let i = 0; i < audioBinary.length; i++) {
-          byteArray[i] = audioBinary.charCodeAt(i);
-        }
+  // ✅ Convert base64 audio to Blob
+  const audioBase64 = data.audio; // this was missing in your code
+  const audioBinary = atob(audioBase64);
+  const byteArray = new Uint8Array(audioBinary.length);
+  for (let i = 0; i < audioBinary.length; i++) {
+    byteArray[i] = audioBinary.charCodeAt(i);
+  }
 
-        const blob = new Blob([byteArray], { type: 'audio/mpeg' });
-        const url = URL.createObjectURL(blob);
-        audioPlayer.src = url;
-        audioPlayer.hidden = false;
-        audioPlayer.play();
-        logs.innerText = "✅ Auto-reply generated.";
-      } catch (err) {
-        logs.innerText = "❌ Auto-reply failed.";
-        console.error(err);
-      }
-    }
+  const blob = new Blob([byteArray], { type: 'audio/mpeg' });
+  const url = URL.createObjectURL(blob);
+
+  // ✅ Play audio
+  audioPlayer.src = url;
+  audioPlayer.hidden = false;
+  audioPlayer.play();
+
+  logs.innerText = "✅ Auto-reply generated.";
+} catch (err) {
+  logs.innerText = "❌ Auto-reply failed.";
+  console.error(err);
+}
+}
   </script>
 </body>
 </html>

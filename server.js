@@ -1,3 +1,4 @@
+
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
@@ -161,22 +162,28 @@ app.post('/api/transcribe-and-reply', upload.single('audio'), async (req, res) =
   if (!filePath) return res.status(400).json({ error: 'No audio uploaded' });
 
   try {
-    const transcript = "Hello, I have a parcel for you."; // Replace with real transcription
+    // const transcript = "Hello, I have a parcel for you.";
+    const transcript="Open the door right now! I know you're inside. If you don't open, I’ll break it down!"
+
+     // Replace with real transcription
 
     const openRouterResp = await axios.post(
       'https://openrouter.ai/api/v1/chat/completions',
       {
         model: 'mistralai/mistral-7b-instruct',
         messages: [
-          { role: 'system', content: 'You are a helpful, polite woman speaking from inside the house.' },
+          { role: 'system', content: 'You are a firm and confident woman speaking from inside the house. Your voice should sound like someone who is calm, in control, and not intimidated. You want to scare off intruders while sounding smart and authoritative.' },
           { role: 'user', content: transcript }
         ]
       },
       {
         headers: {
-          'Authorization': `Bearer ${openrouterKey}`,
-          'Content-Type': 'application/json'
-        }
+  'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+  'Content-Type': 'application/json',
+  'HTTP-Referer': 'https://yourwebsite.com/',  // Optional but sometimes required
+  'X-Title': 'EchoGuard AI'                    // Optional identifier for your project
+}
+
       }
     );
 
@@ -185,7 +192,7 @@ app.post('/api/transcribe-and-reply', upload.single('audio'), async (req, res) =
     console.log("🤖 AI Reply:", replyText);
 
     const voiceResp = await axios.post(
-      'https://echoguard-murfai.onrender.com/generate-voice',
+      'http://localhost:5000/generate-voice',
       {
         message: replyText,
         country: 'uk',
