@@ -27,20 +27,7 @@ Whisper	Audio transcription (or fake input for now)
 FFmpeg	Audio format handling
 HTML/JS	Frontend user interface
 
-🗂️ Project Structure
-bash
-Copy
-Edit
-EchoGuard/
-│
-├── Backend/
-│   ├── server.js            # Main backend server
-│   ├── .env                 # API keys and config
-│   ├── uploads/             # Temporary audio files
-│   └── static/              # Optional background or whisper audio
-│
-├── index.html               # Main frontend UI
-└── README.md                # This file
+ 
 ⚙️ Setup Instructions
 1. Clone and Install
 bash
@@ -63,7 +50,7 @@ bash
 Copy
 Edit
 node server.js
-# ✅ EchoGuard backend running on http://localhost:5000
+
 4. Open the UI
 Open index.html in your browser manually or use Live Server.
 
@@ -107,11 +94,12 @@ Motion Detection
 Web deployment via Render/Vercel
 
 🤝 Credits
-@OpenRouter
 
-@Murf AI
+OpenRouter
 
-@OpenAI Whisper
+Murf AI
+
+OpenAI Whisper
 
 Designed for safety by and for women 
 
