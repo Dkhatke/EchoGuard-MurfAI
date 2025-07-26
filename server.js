@@ -29,7 +29,7 @@ if (!apiKey || !openrouterKey) {
 }
 
 // FFmpeg Path
-const ffmpeg = require('fluent-ffmpeg');
+
 const ffmpegPath = require('ffmpeg-static');
 ffmpeg.setFfmpegPath(ffmpegPath);
 
