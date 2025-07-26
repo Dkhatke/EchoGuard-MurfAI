@@ -183,7 +183,7 @@ app.post('/api/transcribe-and-reply', upload.single('audio'), async (req, res) =
     console.log("🤖 AI Reply:", replyText);
 
     const voiceResp = await axios.post(
-      'http://localhost:5000/generate-voice',
+      'https://echoguard-murfai.onrender.com/generate-voice',
       {
         message: replyText,
         country: 'uk',
