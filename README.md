@@ -92,7 +92,7 @@ Whisper background mixing
 Motion Detection 
 
 Web deployment via Render/Vercel
-
+🔗 Demo :https://shorturl.at/ymSLV
 🤝 Credits
 
 OpenRouter
